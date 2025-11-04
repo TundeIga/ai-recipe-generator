@@ -1,5 +1,6 @@
 "use client";
 
+import { Recipe } from "./types/recipe";
 import { useState } from "react";
 import { ChefHat, Sparkles } from "lucide-react";
 import IngredientInput from "./components/IngredientInput";
@@ -10,7 +11,7 @@ import SavedRecipes from "./components/SavedRecipes";
 export default function Home() {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [dietary, setDietary] = useState<string[]>([]);
-  const [recipe, setRecipe] = useState<any>(null);
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
 
@@ -22,7 +23,7 @@ export default function Home() {
 
     setLoading(true);
     try {
-      const response = await fetch("/app/api/generate-recipe/route.ts", {
+      const response = await fetch("/api/generate-recipe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ingredients, dietary }),

@@ -1,32 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Heart, Clock, Users } from "lucide-react";
-
-interface Recipe {
-  title: string;
-  description: string;
-  prepTime: string;
-  servings: string;
-  ingredients: string[];
-  instructions: string[];
-  
-}
+import { Recipe } from "../types/recipe";
 
 interface Props {
   recipe: Recipe;
 }
 
 export default function RecipeCard({ recipe }: Props) {
-  const [isSaved, setIsSaved] = useState(false);
-
-  useEffect(() => {
+  // Calculate initial saved state using useMemo
+  const initialIsSaved = useMemo(() => {
     const saved = localStorage.getItem("savedRecipes");
     if (saved) {
       const recipes = JSON.parse(saved);
-      setIsSaved(recipes.some((r: Recipe) => r.title === recipe.title));
+      return recipes.some((r: Recipe) => r.title === recipe.title);
     }
-  }, [recipe]);
+    return false;
+  }, [recipe.title]);
+
+  const [isSaved, setIsSaved] = useState(initialIsSaved);
 
   const toggleSave = () => {
     const saved = localStorage.getItem("savedRecipes");
@@ -92,7 +85,7 @@ export default function RecipeCard({ recipe }: Props) {
         <ol className="space-y-3">
           {recipe.instructions.map((instruction, index) => (
             <li key={index} className="flex items-start">
-              <span className="flex-shrink-0 w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-semibold mr-3">
+              <span className="shrink-0 w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-semibold mr-3">
                 {index + 1}
               </span>
               <span className="text-gray-700 pt-0.5">{instruction}</span>

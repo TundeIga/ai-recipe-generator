@@ -1,30 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Trash2, BookOpen } from "lucide-react";
-
-interface Recipe {
-  title: string;
-  description: string;
-  prepTime: string;
-  servings: string;
-  ingredients: string[];
-  instructions: string[];
-}
+import { Recipe } from "../types/recipe";
 
 interface Props {
   onSelectRecipe: (recipe: Recipe) => void;
 }
 
-export default function SavedRecipes({ onSelectRecipe }: Props) {
-  const [savedRecipes, setSavedRecipes] = useState<Recipe[]>([]);
+// Helper function to get saved recipes
+function getSavedRecipes(): Recipe[] {
+  if (typeof window === "undefined") return [];
+  const saved = localStorage.getItem("savedRecipes");
+  return saved ? JSON.parse(saved) : [];
+}
 
-  useEffect(() => {
-    const saved = localStorage.getItem("savedRecipes");
-    if (saved) {
-      setSavedRecipes(JSON.parse(saved));
-    }
-  }, []);
+export default function SavedRecipes({ onSelectRecipe }: Props) {
+  // Initialize state directly from localStorage
+  const [savedRecipes, setSavedRecipes] = useState<Recipe[]>(getSavedRecipes);
 
   const deleteRecipe = (title: string) => {
     const updated = savedRecipes.filter((r) => r.title !== title);
